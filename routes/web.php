@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TareaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,20 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::get('tareas-pendientes', [TareaController::class, 'enviarTareas']);
+Route::post('tarea/eliminar-db/{tarea}', [TareaController::class, 'borradoDb']);
+Route::resource('tarea', TareaController::class);
+
+Route::middleware(['verified'])->group(function () {
+    Route::get('bienvenida', function() {
+        return view('bienvenida');
+    });
+
+    Route::get('contacto', function() {
+        return view('contacto');
+    });
+});
+
+
+Route::get('enviar-reporte', [TareaController::class, 'enviarReporte']);

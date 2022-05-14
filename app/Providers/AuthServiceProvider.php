@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Tarea;
 use App\Models\Team;
+use App\Models\User;
+use App\Policies\TareaPolicy;
 use App\Policies\TeamPolicy;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -15,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Team::class => TeamPolicy::class,
+        Tarea::class => TareaPolicy::class,
     ];
 
     /**
@@ -26,6 +32,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('administra', function (User $user, Tarea $tarea) {
+            return $tarea->categoria == 'Otra'
+                ? Response::allow()
+                : Response::deny('You must be an administrator.');
+        });
+
     }
 }
